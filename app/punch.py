@@ -17,7 +17,7 @@ class Punch(object):
             lis = ul.find_all('li')
             topics = []
             for li in lis[1:]:
-                topics.append(li.find('a').text)
+                topics.append(li.find('a').text.lower())
             return topics
 
     def getTopicUrls(self):
