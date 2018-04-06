@@ -13,6 +13,9 @@ def get_topics():
 
 @app.route('/articles/', methods=['GET'])
 def get_articles():
+    """
+    Get all the articles from Punch
+    """
     topic = request.args.get('topic').lower()
     date_provided = request.args.get('date')
     try:
