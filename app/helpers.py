@@ -13,7 +13,7 @@ def get_articles_response(articles, status_code, status):
         'status': status
     })), status_code
 
-def get_articles_by_date(articles, status_code, status):
+def get_articles_by_date_response(articles, status_code, status):
     return make_response(jsonify({
         'articles':articles,
         'status':status,

@@ -3,7 +3,7 @@ from flask import jsonify, request
 from dateutil.parser import parse
 from app import app
 from .punch import Punch
-from .helpers import get_topics_response, get_articles_response, get_articles_by_date, response
+from .helpers import get_topics_response, get_articles_response, response, get_articles_by_date_response
 
 punch = Punch()
 
@@ -26,6 +26,7 @@ def get_articles():
         return response('failed', 'Provide a valid topic or date', 400)
     if topic in punch.getTopics():
         if date_provided:
-            return get_articles_by_date(punch.get_articles_by_date(topic, parse(date_provided).timestamp()), 'success', 200)
+            date = parse(date_provided).timestamp()
+            return get_articles_by_date_response(punch.get_articles_by_date(topic, date), 200, 'success')
         return get_articles_response(punch.getArticles(topic), 200, 'success')
 
