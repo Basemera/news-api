@@ -1,4 +1,5 @@
 from flask import make_response, jsonify
+from string import punctuation
 
 def get_topics_response(topics, status_code):
     return make_response(jsonify({
@@ -24,3 +25,9 @@ def response(status,message, status_code):
         'status': status,
         'message': message
     })), status_code
+
+def generate_article_url(title):
+    
+    split_title = title.translate(str.maketrans("","", punctuation)).split( )
+    article_url = "-".join(split_title)
+    return article_url

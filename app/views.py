@@ -9,7 +9,7 @@ punch = Punch()
 
 @app.route('/topics', methods=['GET'])
 def get_topics():
-    return get_topics_response(punch.getTopics(), 200)
+    return get_topics_response(punch.get_topics(), 200)
 
 @app.route('/articles/', methods=['GET'])
 def get_articles():
@@ -24,9 +24,13 @@ def get_articles():
             parse(date_provided).timestamp()
     except ValueError:
         return response('failed', 'Provide a valid topic or date', 400)
-    if topic in punch.getTopics():
+    if topic in punch.get_topics():
         if date_provided:
             date = parse(date_provided).timestamp()
             return get_articles_by_date_response(punch.get_articles_by_date(topic, date), 200, 'success')
-        return get_articles_response(punch.getArticles(topic), 200, 'success')
+        return get_articles_response(punch.get_articles(topic), 200, 'success')
+
+@app.route('/articleContent', methods=['GET'])
+def get_article_content():
+    return
 
