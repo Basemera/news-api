@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import cssutils
 import requests
 import time
 import json
@@ -57,32 +58,38 @@ class Punch(object):
                 article_body = divs.find('div', class_='seg-summary').find('p').text
                 article_publish_date = divs.find('div', class_="seg-time").find('span').text
                 article_content = self.get_article_content(articleUrl)
-                article_img_url = divs.find('div', class_="blurry").url
+                url = divs.find('div', class_="blurry")['style']
+                style = cssutils.parseStyle(url)
+                img_url = style['background-image']
+                article_img_url = img_url.replace('url(', '').replace(')', '')
+                
                 article = {
                     'publish_date':article_publish_date,
                     'title':articleTitle,
                     'url':articleUrl,
                     'content':article_content,
                     'summary': article_body,
-                    'total_pages':total_pages,
                     'url_to_article_image':article_img_url
-                    
                     
                 }
                 articles.append(article)
+            articles.append(total_pages)
         return articles
 
     def get_article_content(self, url):
-        para = []
+        article_content = []
         self.url = url
         res = requests.get(self.url)
         html = BeautifulSoup(res.content, 'html.parser')
         div = html.find('div', class_="entry-content")
-        p = div.find_all('p')
+       # get only direct paragraph children
+        p = div.find_all('p', recursive=False)
+
         for p in p:
-            texts = p.text
-            para.append(texts)
-        return para
+            for unnecessary_tag in p.find_all(['script', 'style', 'ins']):
+                unnecessary_tag.extract()
+            article_content.append(p.text)
+        return article_content
 
     def get_articles_by_date(self, topic, date):
         available_articles = self.get_articles(topic)
@@ -94,7 +101,7 @@ class Punch(object):
         return articles
 
 punch = Punch()
-print(punch.get_articles('news'))
+# print(punch.get_articles('news'))
 # print (punch.get_articles_by_date('news', 'April 6th, 2018'))
                 
-
+# print(punch.get_article_content("http://punchng.com/pcni-debunks-ty-danjumas-resignation-as-chairman/"))
