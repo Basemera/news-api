@@ -18,6 +18,7 @@ def get_articles():
     """
     topic = request.args.get('topic').lower()
     date_provided = request.args.get('date')
+    page = request.args.get('page')
     try:
         str(topic)
         if date_provided:
@@ -28,7 +29,7 @@ def get_articles():
         if date_provided:
             date = parse(date_provided).timestamp()
             return get_articles_by_date_response(punch.get_articles_by_date(topic, date), 200, 'success')
-        return get_articles_response(punch.get_articles(topic), 200, 'success')
+        return get_articles_response(punch.get_articles(topic, page), 200, 'success')
 
 @app.route('/articleContent', methods=['GET'])
 def get_article_content():

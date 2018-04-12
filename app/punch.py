@@ -17,6 +17,8 @@ class Punch(object):
             div = html.find('div', class_="menu-main-menu-container")
             ul = div.find('ul', class_='menu')
             lis = ul.find_all('li')
+            topic_url = ul.find_all('a')
+
             topics = []
             for li in lis[1:]:
                 topics.append(li.find('a').text.lower())
@@ -36,8 +38,8 @@ class Punch(object):
                 topics[topic] = topicUrl
             return topics
 
-    def get_articles(self, topic):
-        self.url = self.get_topics_urls()[topic.lower()]
+    def get_articles(self, topic, page):
+        self.url = self.get_topics_urls()[topic.lower()]  + 'page/' + page
         res = requests.get(self.url)
         html = BeautifulSoup(res.content, 'html.parser')
         articles = []
@@ -75,6 +77,9 @@ class Punch(object):
                 articles.append(article)
             articles.append(total_pages)
         return articles
+
+    def get_pagination(self, page):
+        pass
 
     def get_article_content(self, url):
         article_content = []
