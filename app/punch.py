@@ -1,20 +1,18 @@
 from bs4 import BeautifulSoup
 import cssutils
 import requests
-import time
-import json
 from dateutil.parser import parse
-from .helpers import generate_article_url
+
 
 class Punch(object):
     def __init__(self):
-        self.url = "http://punchng.com/"
-        
+        self.url = 'http://punchng.com/'
+
     def get_topics(self):
         res = requests.get(self.url)
         html = BeautifulSoup(res.content, 'html.parser')
         if html:
-            div = html.find('div', class_="menu-main-menu-container")
+            div = html.find('div', class_='menu-main-menu-container')
             ul = div.find('ul', class_='menu')
             lis = ul.find_all('li')
             topic_url = ul.find_all('a')
@@ -28,7 +26,7 @@ class Punch(object):
         res = requests.get(self.url)
         html = BeautifulSoup(res.content, 'html.parser')
         if html:
-            div = html.find('div', class_="menu-main-menu-container")
+            div = html.find('div', class_='menu-main-menu-container')
             ul = div.find('ul', class_='menu')
             lis = ul.find_all('li')
             topics = {}
@@ -39,49 +37,49 @@ class Punch(object):
             return topics
 
     def get_articles(self, topic, page):
-        self.url = self.get_topics_urls()[topic.lower()]  + 'page/' + page
+        self.url = self.get_topics_urls()[topic.lower()] + 'page/' + page
         res = requests.get(self.url)
         html = BeautifulSoup(res.content, 'html.parser')
         articles = []
         if html:
-            main = html.find('main', class_="site-main container-fluid")
-            section = main.find('section', class_="row .lll")
-            div_cards = section.find('div', class_="cards no-gutter")
+            main = html.find('main', class_='site-main container-fluid')
+            section = main.find('section', class_='row .lll')
+            div_cards = section.find('div', class_='cards no-gutter')
             divs = div_cards.find_all('div', class_='items col-sm-12')
-            pagination_section = main.find('section', class_="first-row")
-            div_pagination = pagination_section.find('div', class_="paginations")
+            pagination_section = main.find('section', class_='first-row')
+            div_pagination = pagination_section.find(
+                'div', class_='paginations')
             a = div_pagination.find_all('a')
             total_pages_list = []
             for a in a:
                 total_pages_list.append(a.text)
-            if total_pages_list[(len(total_pages_list)-1)] == "Next »":
-                total_pages = "yes yes"
-                # total_pages = total_pages_list[(len(total_pages_list)-2)]
-            # total_pages = "no no"
-            total_pages = total_pages_list[(len(total_pages_list)-2)]
-            # total_pages = (len(total_pages_list)-2)
+            if total_pages_list[(len(total_pages_list) - 1)] == 'Next »':
+                total_pages = total_pages_list[(len(total_pages_list)-2)]
+            total_pages = total_pages_list[(len(total_pages_list) - 1)]
             for divs in divs:
                 articleUrl = divs.find('a').get('href')
                 articleTitle = divs.find('a').get('title')
-                article_body = divs.find('div', class_='seg-summary').find('p').text
-                article_publish_date = divs.find('div', class_="seg-time").find('span').text
+                article_body = divs.find(
+                    'div', class_='seg-summary').find('p').text
+                article_publish_date = divs.find(
+                    'div', class_='seg-time').find('span').text
                 article_content = self.get_article_content(articleUrl)
-                url = divs.find('div', class_="blurry")['style']
+                url = divs.find('div', class_='blurry')['style']
                 style = cssutils.parseStyle(url)
                 img_url = style['background-image']
                 article_img_url = img_url.replace('url(', '').replace(')', '')
-                
+
                 article = {
-                    'publish_date':article_publish_date,
-                    'title':articleTitle,
-                    'url':articleUrl,
-                    'content':article_content,
+                    'publish_date': article_publish_date,
+                    'title': articleTitle,
+                    'url': articleUrl,
+                    'content': article_content,
                     'summary': article_body,
-                    'url_to_article_image':article_img_url,
-                    
+                    'url_to_article_image': article_img_url,
+
                 }
                 articles.append(article)
-            articles.append({"total_pages":total_pages})
+            articles.append({'total_pages': total_pages})
         return articles
 
     def get_pagination(self, page):
@@ -92,8 +90,8 @@ class Punch(object):
         self.url = url
         res = requests.get(self.url)
         html = BeautifulSoup(res.content, 'html.parser')
-        div = html.find('div', class_="entry-content")
-       # get only direct paragraph children
+        div = html.find('div', class_='entry-content')
+        # get only direct paragraph children
         p = div.find_all('p', recursive=False)
 
         for p in p:
@@ -111,8 +109,9 @@ class Punch(object):
                 articles.append(article)
         return articles
 
+
 punch = Punch()
 # print(punch.get_articles('news'))
 # print (punch.get_articles_by_date('news', 'April 6th, 2018'))
-                
+
 # print(punch.get_article_content("http://punchng.com/pcni-debunks-ty-danjumas-resignation-as-chairman/"))

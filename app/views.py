@@ -1,4 +1,3 @@
-import json
 from flask import jsonify, request
 from dateutil.parser import parse
 from app import app
@@ -7,9 +6,11 @@ from .helpers import get_topics_response, get_articles_response, response, get_a
 
 punch = Punch()
 
+
 @app.route('/topics', methods=['GET'])
 def get_topics():
     return get_topics_response(punch.get_topics(), 200)
+
 
 @app.route('/articles/', methods=['GET'])
 def get_articles():
@@ -31,7 +32,7 @@ def get_articles():
             return get_articles_by_date_response(punch.get_articles_by_date(topic, date), 200, 'success')
         return get_articles_response(punch.get_articles(topic, page), 200, 'success')
 
+
 @app.route('/articleContent', methods=['GET'])
 def get_article_content():
     return
-
