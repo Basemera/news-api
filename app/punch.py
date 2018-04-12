@@ -51,9 +51,15 @@ class Punch(object):
             pagination_section = main.find('section', class_="first-row")
             div_pagination = pagination_section.find('div', class_="paginations")
             a = div_pagination.find_all('a')
-            total_pages = []
+            total_pages_list = []
             for a in a:
-                total_pages.append(a.text)
+                total_pages_list.append(a.text)
+            if total_pages_list[(len(total_pages_list)-1)] == "Next »":
+                total_pages = "yes yes"
+                # total_pages = total_pages_list[(len(total_pages_list)-2)]
+            # total_pages = "no no"
+            total_pages = total_pages_list[(len(total_pages_list)-2)]
+            # total_pages = (len(total_pages_list)-2)
             for divs in divs:
                 articleUrl = divs.find('a').get('href')
                 articleTitle = divs.find('a').get('title')
@@ -71,11 +77,11 @@ class Punch(object):
                     'url':articleUrl,
                     'content':article_content,
                     'summary': article_body,
-                    'url_to_article_image':article_img_url
+                    'url_to_article_image':article_img_url,
                     
                 }
                 articles.append(article)
-            articles.append(total_pages)
+            articles.append({"total_pages":total_pages})
         return articles
 
     def get_pagination(self, page):
