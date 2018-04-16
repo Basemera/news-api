@@ -24,11 +24,13 @@ def get_articles():
     topic_caps = request.args.get('topic')
     date_provided = request.args.get('date')
     page = request.args.get('page', 1)
+
+    if not page.isdigit():
+        return value_error_response('failure', 'Page must be an interger', 400)
     if not topic_caps:
         return value_error_response('failure', 'Topic not provided please provide one', 400)
     topic = topic_caps.lower()
-    if not page.isdigit():
-        return value_error_response('failure', 'Page must be an interger', 400)
+
     try:
         str(topic)
         if topic not in punch.get_topics():
@@ -42,3 +44,4 @@ def get_articles():
             date = parse(date_provided).timestamp()
             return get_articles_by_date_response(punch.get_articles_by_date(topic, page, date), 200, 'success')
         return get_articles_response(punch.get_article(topic, page), 200, 'success')
+    return value_error_response('failure', 'No articles for that topic', 400)
