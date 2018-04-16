@@ -12,6 +12,7 @@ def get_topics():
     """
         Get all the topics from Punch
     """
+
     return get_topics_response(punch.get_topics(), 200)
 
 
@@ -20,11 +21,18 @@ def get_articles():
     """
     Get all the articles from Punch
     """
-    topic = request.args.get('topic').lower()
+    topic_caps = request.args.get('topic')
     date_provided = request.args.get('date')
-    page = request.args.get('page')
+    page = request.args.get('page', 1)
+    if not topic_caps:
+        return value_error_response('failure', 'Topic not provided please provide one', 400)
+    topic = topic_caps.lower()
+    if not page.isdigit():
+        return value_error_response('failure', 'Page must be an interger', 400)
     try:
         str(topic)
+        if topic not in punch.get_topics():
+            return value_error_response('failure', 'No articles for that topic', 400)
         if date_provided:
             parse(date_provided).timestamp()
     except ValueError:

@@ -78,6 +78,7 @@ class Punch(object):
                     for unnecessary_tag in p.find_all(['script', 'style', 'ins']):
                         unnecessary_tag.extract()
                     article_content.append(p.text)
+                    # articles_content = ' '.join(article_content)
 
                     article = {
                         'publish_date': article_publish_date,
@@ -89,11 +90,14 @@ class Punch(object):
 
                     }
                     articles.append(article)
+                # for article in articles:
+                #     content = article.get('content')
+                #     article['content'] = ' '.join(content)
         articles.append({'pages': total_pages})
 
         return articles
 
-    def get_articles_by_date(self, topic, date, page):
+    def get_articles_by_date(self, topic, date, page=1):
         available_articles = self.get_article(topic, page)
         articles = []
         for article in available_articles:
